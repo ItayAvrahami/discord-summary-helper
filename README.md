@@ -6,6 +6,57 @@ The CLI is config-first. Normal skill use should not pass policy flags such as `
 
 This tool does not provide a hosted service, Discord credentials, Discord scraping logic, or built-in LLM summarization for the normal workflow. The CLI prepares evidence; the agent writes the final summary.
 
+## How It Works
+
+```mermaid
+flowchart LR
+    User["User request"] --> Agent["Agent skill"]
+    Agent --> Status["Check channel status"]
+    Status --> Fresh{"Cache fresh and complete?"}
+    Fresh -- "Yes" --> Context["Emit bounded context"]
+    Fresh -- "No, or user asks latest" --> Refresh["Refresh one channel"]
+    Refresh --> Exporter["DiscordChatExporter"]
+    Exporter --> Raw["cache/raw/<channel>"]
+    Raw --> Normalize["Normalize messages"]
+    Normalize --> Normalized["cache/normalized/<channel>.json"]
+    Normalized --> Context
+    Context --> Summary["Agent writes English summary"]
+```
+
+The important boundary is that Discord Summary Helper prepares local evidence. It does not decide what is true beyond the exported data, and it does not need to call an LLM.
+
+## Project Layout
+
+```text
+discord-summary-helper/
+  README.md
+  LICENSE
+  .gitignore
+  .env.example
+  config.example.json
+  pyproject.toml
+  discord_cli.py
+  test_discord_cli.py
+  SKILL.md
+  skills/
+    discord-summary-helper/
+      SKILL.md
+  state/
+    channel_status.example.json
+    last_runs.example.json
+```
+
+Local runtime files are intentionally ignored:
+
+```text
+config.json
+.env
+cache/
+state/*.json
+DiscordChatExporter.Cli*/
+.local/
+```
+
 ## Discord Exporter Dependency
 
 This project does not implement Discord message export itself.
@@ -71,6 +122,19 @@ Before exporting, edit these fields in `config.json`:
 ## Normal Skill Workflow
 
 Use this flow for one channel only:
+
+```mermaid
+flowchart TD
+    Request["User asks for Discord update"] --> Resolve["Resolve one configured channel"]
+    Resolve --> RunStatus["Run --status <channel>"]
+    RunStatus --> NeedRefresh{"Missing, stale, incomplete, or latest requested?"}
+    NeedRefresh -- "Yes" --> RefreshOne["Run --refresh-channel <channel>"]
+    NeedRefresh -- "No" --> UseCache["Use existing normalized cache"]
+    RefreshOne --> GetEvidence["Run --context or --summary-context"]
+    UseCache --> GetEvidence
+    GetEvidence --> AgentSummary["Summarize only from CLI evidence"]
+    AgentSummary --> Caveats["Include source window, bounds, and caveats"]
+```
 
 ```bash
 python discord_cli.py --status 04-performance-engineering
