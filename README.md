@@ -1,10 +1,22 @@
 # Discord Summary Helper
 
-Local evidence-preparation CLI for Discord course channels. It exports one configured channel at a time, caches raw and normalized data, reports cache status, and emits bounded context for an agent to summarize.
+Local Discord evidence-preparation CLI for agent summaries. It exports one configured channel at a time, caches raw and normalized data, reports cache status, and emits bounded LLM-ready context for Codex, Claude Code, or another agent to summarize.
 
 The CLI is config-first. Normal skill use should not pass policy flags such as `--since-days`, `--after`, `--compact`, `--max-messages`, `--max-chars`, or `--timeout-seconds`; those are one-off manual overrides only.
 
 This tool does not provide a hosted service, Discord credentials, Discord scraping logic, or built-in LLM summarization for the normal workflow. The CLI prepares evidence; the agent writes the final summary.
+
+## Why This Exists
+
+Discord channels are useful but noisy. A good agent summary needs bounded evidence, clear source windows, cache freshness, and caveats. This tool handles that preparation layer so the agent can focus on reasoning over the exported evidence instead of guessing what was fetched.
+
+What it gives you:
+
+- one-channel refreshes instead of accidental server-wide exports
+- explicit cache status before summarization
+- normalized local JSON output from DiscordChatExporter exports
+- compact context with message timestamps, authors, post/thread grouping, links, attachments, and bounds
+- a ready-to-copy agent skill for repeatable summaries
 
 ## How It Works
 
@@ -24,6 +36,19 @@ flowchart LR
 ```
 
 The important boundary is that Discord Summary Helper prepares local evidence. It does not decide what is true beyond the exported data, and it does not need to call an LLM.
+
+## Quickstart
+
+```bash
+pip install -e .
+copy config.example.json config.json
+copy .env.example .env
+python discord_cli.py --validate-config
+discord-summary --status performance
+discord-summary --context performance
+```
+
+Then give the generated context to an agent, or install the included skill and ask for a channel summary in natural language.
 
 ## Project Layout
 
@@ -119,6 +144,18 @@ Before exporting, edit these fields in `config.json`:
 - `env_path`
 - `token_env_var`, only if you renamed the token variable in `.env`
 
+Minimal channel shape:
+
+```json
+{
+  "name": "04-performance-engineering",
+  "id": "DISCORD_CHANNEL_ID_HERE",
+  "aliases": ["performance", "performance engineering", "perf"],
+  "type": "forum",
+  "enabled": true
+}
+```
+
 ## Normal Skill Workflow
 
 Use this flow for one channel only:
@@ -150,20 +187,80 @@ Natural-language routing is also supported:
 python discord_cli.py --summary-context "Summarize the latest updates from performance engineering"
 ```
 
-## Core Commands
+## Agent Skill
 
-```bash
-python discord_cli.py --list-channels
-python discord_cli.py --status
-python discord_cli.py --status <channel>
-python discord_cli.py --refresh-channel <channel>
-python discord_cli.py --refresh-missing
-python discord_cli.py --refresh-stale
-python discord_cli.py --context <channel>
-python discord_cli.py --summary-context "<request>"
+The repository includes the same skill in two places:
+
+```text
+SKILL.md
+skills/discord-summary-helper/SKILL.md
 ```
 
+Copy `skills/discord-summary-helper/` into your agent's skill directory, or keep the root `SKILL.md` open as the operating instructions.
+
+The skill tells the agent to:
+
+1. Resolve the request to one configured channel.
+2. Run status first.
+3. Refresh only if cache is missing, stale, incomplete, or the user asks for latest/current updates.
+4. Run `--context` or `--summary-context`.
+5. Summarize only from the emitted evidence.
+6. Include the source window, evidence bounds, and caveats.
+
+## Core Commands
+
+| Command | Purpose |
+|---|---|
+| `python discord_cli.py --list-channels` | Show configured channels and aliases. |
+| `python discord_cli.py --status` | Show cache status for all configured channels. |
+| `python discord_cli.py --status <channel>` | Show cache status and effective config for one channel. |
+| `python discord_cli.py --refresh-channel <channel>` | Refresh exactly one configured channel. |
+| `python discord_cli.py --refresh-missing` | Refresh only configured channels with missing normalized cache. |
+| `python discord_cli.py --refresh-stale` | Refresh only configured channels with stale cache. |
+| `python discord_cli.py --context <channel>` | Emit bounded context for one known channel. |
+| `python discord_cli.py --summary-context "<request>"` | Resolve a natural-language request and emit context. |
+
 `--bootstrap-server` exists for explicit first-time/broad refreshes only. Do not use it during normal summaries.
+
+If installed with `pip install -e .`, replace `python discord_cli.py` with `discord-summary`.
+
+## Example Output
+
+Status output is designed for both humans and agents:
+
+```text
+channel: 04-performance-engineering
+effective config:
+resolved channel: 04-performance-engineering
+resolved context window: after=2026-06-19, since_days=1
+max_messages: 50
+max_chars: 30000
+compact mode: True
+cache freshness: ok
+message count: 12
+partial export: False
+recommended action: Use existing normalized cache
+```
+
+Context output includes grouped evidence and instructions:
+
+```text
+resolved channel: 04-performance-engineering
+source: normalized cache
+context mode: compact
+time range: after=2026-06-19T00:00:00+03:00, before=open
+messages available: 12
+snippets included: 12
+
+grouped compact context:
+- post: 04 | Inference - From Roofline to CUDA Graphs
+  snippet 1: [timestamp] Author: message text...
+
+agent summary instructions:
+- Answer in English.
+- Use only the Discord evidence in this context.
+- Include the source window and caveats.
+```
 
 ## Config Model
 
