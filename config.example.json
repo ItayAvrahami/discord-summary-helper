@@ -1,0 +1,217 @@
+{
+  "server_name": "AI Performance Engineering IL",
+  "server_id": "DISCORD_SERVER_ID_HERE",
+  "default_time_range_days": 7,
+  "cache_stale_after_hours": 24,
+  "cache_ttl_minutes": 30,
+  "output_limits": {
+    "max_posts": 10,
+    "max_snippets_per_post": 3,
+    "max_total_snippets": 25,
+    "max_chars_per_snippet": 500,
+    "max_output_chars": 12000
+  },
+  "discord_exporter_path": "PATH_TO_DiscordChatExporter_CLI",
+  "env_path": ".env",
+  "token_env_var": "discord_token_key",
+  "tool_defaults": {
+    "default_context_window": {
+      "since_days": 7
+    },
+    "refresh_window": {
+      "since_days": 1
+    },
+    "stale_threshold_hours": 24,
+    "compact": true,
+    "max_messages": 25,
+    "max_chars": 12000,
+    "output_language": "English",
+    "auto_refresh_policy": "ask",
+    "safety": {
+      "export_timeout_seconds": 240,
+      "server_parallel": 1,
+      "stop_on_forbidden": true,
+      "stop_on_unauthorized": true,
+      "allow_auto_bootstrap": false,
+      "retry_attempts": 0
+    }
+  },
+  "allowed_generic_aliases": [
+    "general"
+  ],
+  "channels": [
+    {
+      "name": "03-mlops",
+      "aliases": [
+        "03-mlops",
+        "mlops",
+        "MLOps"
+      ],
+      "id": "DISCORD_CHANNEL_ID_1_03_MLOPS",
+      "type": "forum",
+      "enabled": true,
+      "overrides": {
+        "default_context_window": {
+          "since_days": 7
+        },
+        "refresh_window": {
+          "since_days": 7
+        },
+        "max_messages": 100,
+        "max_chars": 50000
+      }
+    },
+    {
+      "name": "02-llm-architecture",
+      "aliases": [
+        "02-llm-architecture",
+        "llm architecture",
+        "llm-architecture",
+        "architecture module"
+      ],
+      "id": "DISCORD_CHANNEL_ID_2_02_LLM_ARCHITECTURE",
+      "type": "forum",
+      "enabled": true
+    },
+    {
+      "name": "04-performance-engineering",
+      "aliases": [
+        "04-performance-engineering",
+        "04-Performance-engineering",
+        "performance",
+        "perf",
+        "performance engineering",
+        "performance-engineering"
+      ],
+      "id": "DISCORD_CHANNEL_ID_3_04_PERFORMANCE_ENGINEERING",
+      "type": "forum",
+      "enabled": true,
+      "overrides": {
+        "default_context_window": {
+          "since_days": 1
+        },
+        "refresh_window": {
+          "since_days": 1
+        },
+        "max_messages": 50,
+        "max_chars": 30000
+      }
+    },
+    {
+      "name": "01-agents",
+      "aliases": [
+        "01-agents",
+        "ai agents",
+        "agents module"
+      ],
+      "id": "DISCORD_CHANNEL_ID_4_01_AGENTS",
+      "type": "forum",
+      "enabled": true
+    },
+    {
+      "name": "announcements",
+      "aliases": [
+        "announcements",
+        "course announcements"
+      ],
+      "id": "DISCORD_CHANNEL_ID_5_ANNOUNCEMENTS",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "name": "introduction",
+      "aliases": [
+        "introduction",
+        "introductions",
+        "course introduction"
+      ],
+      "id": "DISCORD_CHANNEL_ID_6_INTRODUCTION",
+      "type": "text",
+      "enabled": true,
+      "include_threads": false,
+      "overrides": {
+        "default_context_window": {
+          "since_days": 2
+        },
+        "refresh_window": {
+          "since_days": 2
+        }
+      }
+    },
+    {
+      "name": "off-topic-no-study",
+      "aliases": [
+        "off-topic-no-study",
+        "off topic no study",
+        "off-topic"
+      ],
+      "id": "DISCORD_CHANNEL_ID_7_OFF_TOPIC_NO_STUDY",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "name": "jobs",
+      "aliases": [
+        "jobs",
+        "job posts",
+        "job opportunities"
+      ],
+      "id": "DISCORD_CHANNEL_ID_8_JOBS",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "name": "random-coffee",
+      "aliases": [
+        "random-coffee",
+        "random coffee"
+      ],
+      "id": "DISCORD_CHANNEL_ID_9_RANDOM_COFFEE",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "name": "papers-and-tools",
+      "aliases": [
+        "papers-and-tools",
+        "papers and tools",
+        "papers tools"
+      ],
+      "id": "DISCORD_CHANNEL_ID_10_PAPERS_AND_TOOLS",
+      "type": "forum",
+      "enabled": true
+    },
+    {
+      "name": "projects-and-collaborations",
+      "aliases": [
+        "projects-and-collaborations",
+        "projects and collaborations",
+        "projects collaborations"
+      ],
+      "id": "DISCORD_CHANNEL_ID_11_PROJECTS_AND_COLLABORATIONS",
+      "type": "forum",
+      "enabled": true
+    },
+    {
+      "name": "general",
+      "aliases": [
+        "general",
+        "course general"
+      ],
+      "id": "DISCORD_CHANNEL_ID_12_GENERAL",
+      "type": "text",
+      "enabled": true
+    },
+    {
+      "name": "help-infra",
+      "aliases": [
+        "help-infra",
+        "help infra",
+        "infra help"
+      ],
+      "id": "DISCORD_CHANNEL_ID_13_HELP_INFRA",
+      "type": "forum",
+      "enabled": true
+    }
+  ]
+}

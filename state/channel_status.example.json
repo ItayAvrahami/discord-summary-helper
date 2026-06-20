@@ -1,0 +1,14 @@
+{
+  "04-performance-engineering": {
+    "last_attempted_refresh": "2026-06-13T21:17:03+03:00",
+    "last_successful_refresh": "2026-06-13T21:17:12+03:00",
+    "requested_window": "after=2026-06-12, since_days=1",
+    "export_source": "channel",
+    "partial_export": false,
+    "last_error": "",
+    "last_warning": "",
+    "raw_json_file_count": 2,
+    "posts_count": 2,
+    "messages_count": 10
+  }
+}

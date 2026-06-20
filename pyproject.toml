@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "discord-summary-helper"
+version = "0.1.0"
+description = "Local Discord evidence-preparation CLI for agent summaries."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+
+[project.scripts]
+discord-summary = "discord_cli:main"
+
+[tool.setuptools]
+py-modules = ["discord_cli"]
